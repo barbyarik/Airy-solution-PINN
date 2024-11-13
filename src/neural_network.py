@@ -81,9 +81,20 @@ def _fit(model, optimizer, epochs, device, criterion, train_loader):
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
+
             if batch_idx % 5 == 0:
                 loop.set_description(f"Epoch [{epoch}/{epochs}]")
                 loop.set_postfix(loss=loss.item(), acc=acc, lr=scheduler.get_last_lr()[0])
         scheduler.step()
+
+def save_checkpoint(checkpoint, filename='new_checkpoint'):
+    '''Saves the checkpoint in tar format'''
+
+    torch.save(checkpoint, f'data/checkpoints/{filename}.pth.tar') 
+
+def load_checkpoint(filename):
+    '''Loads a checkpoint from the tar format'''
+
+    return torch.load(f'data/checkpoints/{filename}.pth.tar')
 
 def launch(): pass
