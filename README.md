@@ -43,7 +43,7 @@ $$(\ast)$$ функция $$\Gamma$$ была посчитана с помощь
 
 ## Функция потерь (Loss)
 
-$$MSE \textrm{-} PINN(y^{true}, y^{pred}) = G_{eq} + \lambda \cdot G_{b} = \frac1{N} \sum\limits_{i=1}^N (y_{i}^{\prime\prime} - x_{i}*y_{i}^{\prime})^2 + \lambda \cdot [(y(0)- f(0))^2 + (y^{\prime}(0) - f^{\prime}(0))^2]$$
+$$MSE \textrm{-} PINN(y^{true}, y^{pred}) = G_{eq} + \lambda \cdot G_{b} = \frac1{N} \sum\limits_{i=1}^N (y_{i}^{\prime\prime} - x_{i}*y_{i})^2 + \lambda \cdot [(y(0)- f(0))^2 + (y^{\prime}(0) - f^{\prime}(0))^2]$$
 
 Полькольку PINN-нейросеть, обрабатывая данные, в качестве результата возвращает $$y_{i} = f(x_{i})$$ величина $$y_{i}^{\prime} = f_{i}^{\prime}(x_{i})$$ может быть посчитана с помощью автоматического дифференцирования, поддерживаемого модулем torch.
 
