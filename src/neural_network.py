@@ -14,14 +14,14 @@ def _choose_device():
     print(f"Is CUDA supported by this system?")
     if not torch.cuda.is_available():
         device = torch.device('cpu')
-        print("No, the CPU will be used")
+        print("No, the CPU will be used\n")
     else:
         device = torch.device('cuda')
         print("Yes, the GPU will be used")
         print(f"CUDA version: {torch.version.cuda}")
         cuda_id = torch.cuda.current_device()
         print(f"ID of the current CUDA device: {torch.cuda.current_device()}")
-        print(f"The name of the current CUDA device: {torch.cuda.get_device_name(cuda_id)}")
+        print(f"The name of the current CUDA device: {torch.cuda.get_device_name(cuda_id)}\n")
     
     return device
 
@@ -91,11 +91,14 @@ def _fit(model, optimizer, epochs, device, criterion, train_loader, gamma):
 def save_checkpoint(checkpoint, filename='new_checkpoint'):
     '''Saves the checkpoint in tar format'''
 
+    print('--> The checkpoint of the model has been saved. \
+The result can be seen in data/checkpoints/\n')
     torch.save(checkpoint, f'data/checkpoints/{filename}.pth.tar') 
 
 def load_checkpoint(filename):
     '''Loads a checkpoint from the tar format'''
 
+    print('--> The checkpoint of the model has been loaded.\n')
     return torch.load(f'data/checkpoints/{filename}.pth.tar')
 
 def launch(model, train_data, epochs=250, batchsize=128, lr=0.005, lamb=1.0, gamma=0.95):
