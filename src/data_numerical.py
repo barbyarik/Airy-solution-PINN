@@ -4,9 +4,7 @@ and the simplest processing of the results obtained.
 '''
 
 import math
-import mplcyberpunk
 import pandas as pd
-import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
 const_a, const_b = (3, -10)
@@ -52,26 +50,12 @@ def get_numerical_airy(data_length=10_000):
 def save_dataframe(dataframe, filename='numerical_dataframe'):
    '''Saves the dataframe in csv format'''
 
+   print('--> The dataframe of the numerical solution has been saved. \
+The result can be seen in data/numerical_airy/\n')
    dataframe.to_csv(f'data/numerical_airy/{filename}.csv', index=False)
 
 def load_dataframe(filename):
    '''Loads a dataframe from the csv format'''
 
+   print('--> The dataframe of the numerical solution has been loaded.\n')
    return pd.read_csv(f'data/numerical_airy/{filename}.csv')
-
-def draw_plot_airy(dataframe, filename='Plot of the Airy function', show=True):
-   '''Draws a plot of the numerical solution and saves it'''
-
-   x_list = list(dataframe['x_value'].values)
-   y_list = list(dataframe['y_value'].values)
-
-   plt.style.use("cyberpunk")
-   plt.figure()
-   plt.plot(x_list, y_list, label='The numerical method')
-   plt.legend(loc='lower right')
-   plt.title('Dependence of y on x', weight='bold')
-   plt.xlabel('x-axis', weight='bold')
-   plt.ylabel('y-axis', weight='bold')
-   mplcyberpunk.add_glow_effects()
-   plt.savefig(f'data/images/{filename}.png')
-   if show: plt.show()
