@@ -1,5 +1,5 @@
 '''
-The data_numerical.py file provides the solution of the equation by numerical methods\
+The data_numerical.py file provides the solution of the equation by numerical methods \
 and the simplest processing of the results obtained.
 '''
 
@@ -67,11 +67,11 @@ def draw_plot_airy(dataframe, filename='Plot of the Airy function', show=True):
 
    plt.style.use("cyberpunk")
    plt.figure()
-   plt.plot(x_list, y_list, label='Численные методы')
+   plt.plot(x_list, y_list, label='The numerical method')
    plt.legend(loc='lower right')
-   plt.title('Зависимость y от x', weight='bold')
-   plt.xlabel('Ось x', weight='bold')
-   plt.ylabel('Ось y', weight='bold')
+   plt.title('Dependence of y on x', weight='bold')
+   plt.xlabel('x-axis', weight='bold')
+   plt.ylabel('y-axis', weight='bold')
    mplcyberpunk.add_glow_effects()
    plt.savefig(f'data/images/{filename}.png')
    if show: plt.show()
