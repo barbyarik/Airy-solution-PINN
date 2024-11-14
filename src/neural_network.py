@@ -4,6 +4,7 @@ its training and use'''
 from tqdm import tqdm
 import torch, torch.nn as nn
 from torch.optim import lr_scheduler
+from torch.utils.data import DataLoader
 from data_numerical import y_0, y_prime_0
 from sklearn.metrics import mean_absolute_percentage_error as mape
 
@@ -37,7 +38,7 @@ class MeanSquaredErrorPINN(nn.Module):
     '''A custom error function that takes into account the equation \
 as one of the parts of the error'''
 
-    def __init__(self, lamb=1.0):
+    def __init__(self, lamb):
         super(MeanSquaredErrorPINN, self).__init__()
         self.lamb = lamb
 
@@ -47,7 +48,7 @@ as one of the parts of the error'''
         y_second_prime = torch.autograd.grad(y_prime, x, grad_outputs=torch.ones_like(y_nn),
                                              create_graph=True)[0]
         
-        equation_loss = torch.mean((y_second_prime - y_prime) ** 2)
+        equation_loss = torch.mean((y_second_prime - y_nn * x) ** 2)
 
         x_0 = torch.tensor([0.], requires_grad=True)
         y_nn_0 = model(x_0)
@@ -63,8 +64,8 @@ transfers it to the selected device'''
 
     return nn.Sequential(*layers_list).to(device=device)
 
-def _fit(model, optimizer, epochs, device, criterion, train_loader):
-    scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=0.95)
+def _fit(model, optimizer, epochs, device, criterion, train_loader, gamma):
+    scheduler = lr_scheduler.StepLR(optimizer, step_size=5, gamma=gamma)
     for epoch in range(1, epochs+1):
         loop = tqdm(enumerate(train_loader), total=len(train_loader), leave=False)
         for batch_idx, (x, y_numerical) in loop:
@@ -97,4 +98,23 @@ def load_checkpoint(filename):
 
     return torch.load(f'data/checkpoints/{filename}.pth.tar')
 
-def launch(): pass
+def launch(model, train_data, epochs=250, batchsize=128, lr=0.005, lamb=1.0, gamma=0.95):
+    '''An interface function that provides training/retraining of \
+the model according to the specified parameters'''
+
+    device = _choose_device()
+    x_list = list(train_data['x_value'].values)
+    y_numerical = list(train_data['y_value'].values)
+    train_loader = DataLoader([(x, y) for x, y in train_data.values],
+                              batch_size=batchsize, shuffle=True)
+    if isinstance(model, list): model = _compile_model(model, device)
+    else: model = model
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    criterion = MeanSquaredErrorPINN(lamb)
+
+    _fit(model, optimizer, epochs, device, criterion, train_loader, gamma)
+    acc = 1 - mape(y_numerical, [float(model(torch.Tensor([x]))) for x in x_list])
+    checkpoint = {'model': model, 'acc': acc}
+    save_checkpoint(checkpoint, filename=f'chekpoint_{round(acc, 3)}_acc')
+  
+    return model
